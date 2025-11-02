@@ -1,115 +1,91 @@
-<p align="center">
-	<img src="./imgs/logo.svg" height=100></img>
-</p>
-<h1 align="center">magic-dash</h1>
-<div align="center">
+# Magic Dash
 
-[![Pyhton](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](./setup.py)
-[![GitHub](https://shields.io/badge/license-MIT-informational)](https://github.com/CNFeffery/magic-dash/blob/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/magic-dash.svg?color=dark-green)](https://pypi.org/project/magic-dash/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+数据质量监控项目，用于数据库质量情况监控、分析。
 
-</div>
 
-命令行工具，用于快捷生成一系列开箱即用✨的标准[Dash](https://github.com/plotly/dash)应用工程模板，加速你的应用开发进程🚀。
+## 项目结构
 
-## 目录
+magic-dash/
+├── assets/             # 静态资源文件（CSS样式、图片、JS脚本等）
+│   ├── css/           # CSS样式文件
+│   ├── imgs/          # 图片资源
+│   ├── js/            # JavaScript脚本文件
+│   └── videos/        # 视频资源
+├── callbacks/          # 回调逻辑层（处理前端交互逻辑）
+│   └── core_pages_c/  # 核心页面回调逻辑
+├── components/         # 可复用UI组件封装
+├── configs/            # 配置中心（认证、数据库、路由、布局等系统配置）
+├── database/           # 数据库文件目录
+├── models/             # 数据模型层（使用peewee定义用户、日志等实体）
+├── utils/              # 工具脚本（如清理缓存文件）
+├── views/              # 视图层（页面布局模块）
+│   ├── core_pages/    # 核心页面视图
+│   └── status_pages/  # 状态页面视图（403、404、500等）
+├── app.py             # 应用入口文件
+├── server.py          # 服务配置文件
+├── requirements.txt   # 项目依赖文件
+├── README.md          # 项目说明文件
+├── .env.template      # 环境变量模板文件
+└── .gitignore         # Git忽略文件配置
 
-[1 安装](#install)<br>
-[2 使用](#usage)<br>
-[3 内置模板列表](#template-list)<br>
-[4 内置模板文档](#template-doc)<br>
-[5 更新日志](#changelog)<br>
-[6 更多应用开发教程](#courses)<br>
 
-<a name="install" ></a>
+## 项目启动方式
 
-## 1 安装
-
+1. 安装依赖：
 ```bash
-pip install magic-dash -U
+pip install -r requirements.txt
 ```
 
-<a name="usage" ></a>
+2. 配置环境变量：
+- 复制 `.env.template` 文件为 `.env`
+- 根据实际环境修改 `.env` 文件中的配置
+- 初始化登录用户: `python -m models.init_db` (仅需执行一次)
 
-## 2 使用
-
-### 2.1 查看内置项目模板
-
+3. 启动应用：
 ```bash
-magic-dash list
-```
+python app.py
+   ```
 
-### 2.2 生成指定项目模板
+4. 访问地址：
+- 本地访问: http://localhost:8050
+- 开发环境: http://127.0.0.1:8050
 
-- 默认生成到当前路径
 
-```bash
-magic-dash create --name magic-dash
-```
+## 技术栈
 
-- 指定生成路径
+- **Web框架**: Dash（>=3.1.1,<4.0.0）结合 Flask 构建应用
+- **UI组件库**: feffery_antd_components（Ant Design 风格组件）
+- **数据库ORM**: peewee（==3.18.2）
+- **用户认证**: Flask_Login（==0.6.3）
+- **工具库**: feffery_dash_utils, feffery_utils_components, user_agents, flask-compress, flask-principal
+- **数据处理**: pandas（==2.3.3）, duckdb（==1.4.1）
+- **数据库驱动**: psycopg2-binary（PostgreSQL支持）
 
-```bash
-magic-dash create --name magic-dash --path 目标路径
-```
 
-### 2.3 查看当前`magic-dash`版本
+## 核心功能模块
 
-```bash
-magic-dash --version
-```
+1. **用户认证与权限管理**
+   - 基于Flask-Login的用户登录/登出功能
+   - 基于Flask-Principal的角色权限控制
+   - 支持管理员和普通用户两种角色
 
-### 2.4 查看命令说明
+2. **页面路由系统**
+   - 支持静态路由和动态路由
+   - 权限控制的页面访问机制
+   - 自定义403、404、500状态页面
 
-```bash
-magic-dash --help
+3. **UI组件系统**
+   - 可复用的侧边菜单组件
+   - 用户个人信息管理面板
+   - 用户管理界面
 
-magic-dash list --help
+4. **数据源管理**
+   - 支持多种数据库类型（SQLite、PostgreSQL、MySQL）
+   - 数据源配置页面
 
-magic-dash create --help
-```
+5. **系统日志**
+   - 用户登录日志记录与展示
 
-<a name="template-list" ></a>
-
-## 3 内置模板列表
-
-```bash
-内置Dash应用项目模板：
-
-- magic-dash    基础多页面应用模板
-- magic-dash-pro    多页面+用户登录应用模板
-- simple-tool    单页面工具应用模板
-```
-
-<a name="template-doc" ></a>
-
-## 4 各内置模板说明文档
-
-|    模板名称    |        模板描述         |             说明文档             |
-| :------------: | :---------------------: | :------------------------------: |
-|   magic-dash   |   基础多页面应用模板    |   [查看](./docs/magic-dash.md)   |
-| magic-dash-pro | 多页面+用户登录应用模板 | [查看](./docs/magic-dash-pro.md) |
-|  simple-tool   |   单页面工具应用模板    |  [查看](./docs/simple-tool.md)   |
-
-<a name="changelog" ></a>
-
-## 5 更新日志
-
-[历史版本更新日志](./changelog.md)
-
-<a name="courses" ></a>
-
-## 6 更多应用开发教程
-
-> 微信公众号「玩转 Dash」，欢迎扫码关注 👇
-
-<p align="center" >
-  <img src="./imgs/公众号.png" height=220 />
-</p>
-
-> 「玩转 Dash」知识星球，海量教程案例模板资源，专业的答疑咨询服务，欢迎扫码加入 👇
-
-<p align="center" >
-  <img src="./imgs/知识星球.jpg" height=220 />
-</p>
+6. **响应式布局**
+   - 基于Ant Design的响应式页面布局
+   - 支持全屏水印功能

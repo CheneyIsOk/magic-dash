@@ -1,0 +1,15 @@
+dash>=3.1.1,<4.0.0
+feffery_antd_components>=0.4.0,<0.5.0
+feffery_dash_utils>=0.2.6
+feffery_utils_components>=0.3.2,<0.4.0
+Flask_Login==0.6.3
+peewee==3.18.2
+user_agents==2.2.0
+flask-compress==1.20
+flask-principal==0.4.0
+yarl==1.22.0
+pandas==2.3.3
+psycopg2-binary==2.9.11
+duckdb==1.4.1
+sqlalchemy==2.0.44
+python-dotenv==1.2.1
