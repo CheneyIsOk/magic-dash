@@ -1,12 +1,41 @@
 import feffery_antd_components as fac
+from dash import html
 import callbacks.core_pages_c.data_source_c as data_source_c
 
-from configs.database_config import source_db
+from configs.database_config import DataSourceModel
 
-db_configs = ['test']
+
+def load_datasource_data():
+    """ 从数据库加载数据源数据 """
+    try:
+        # 从数据库加载所有数据源
+        query = DataSourceModel.select()
+        data_sources = []
+        
+        for idx, ds in enumerate(query):
+            data_sources.append({
+                'key': str(idx + 1),
+                'name': ds.name,
+                'type': 'PostgreSQL' if ds.type == 'postgresql' else 'MySQL',
+                'host': ds.host,
+                'port': str(ds.port),
+                'username': ds.username,
+                'status': '已连接',
+                'action': fac.AntdSpace([
+                    fac.AntdButton('编辑', type='primary', size='small', id={'type': 'edit-btn', 'index': ds.name}),
+                    fac.AntdButton('删除', type='primary', danger=True, size='small', id={'type': 'delete-btn', 'index': ds.name})
+                ])
+            })
+        
+        return data_sources
+    except Exception as e:
+        print(f"加载数据源列表失败: {e}")
+        return []
 
 def render():
     """ 子页面: 数据源管理界面 """
+    # 加载数据源数据
+    datasource_data = load_datasource_data()
     
     return fac.AntdSpace([
         fac.AntdRow([
@@ -23,22 +52,14 @@ def render():
                 {'title': '数据库类型', 'dataIndex': 'type', 'key': 'type'},
                 {'title': '主机地址', 'dataIndex': 'host', 'key': 'host'},
                 {'title': '端口', 'dataIndex': 'port', 'key': 'port'},
+                {'title': '用户名', 'dataIndex': 'username', 'key': 'username'},
                 {'title': '状态', 'dataIndex': 'status', 'key': 'status'},
                 {'title': '操作', 'dataIndex': 'action', 'key': 'action'},
             ],
-            data=[
-                {
-                    'key': str(i),
-                    'name': f'数据源_{i}',
-                    'type': 'PostgreSQL' if i % 2 == 0 else 'MySQL',
-                    'host': '192.168.1.100',
-                    'port': '5432' if i % 2 == 0 else '3306',
-                    'status': '已连接',
-                    'action': '编辑 | 删除'
-                } for i in range(1, len(db_configs) + 1)
-            ] if db_configs else [],
+            data=datasource_data,
             bordered=True,
-            size='middle'
+            size='middle',
+            pagination={'pageSize': 10},
         ),
         
         # 添加数据源弹框
@@ -47,6 +68,7 @@ def render():
             title='添加数据源',
             visible=False,
             children=fac.AntdForm([
+                html.Div(id='editing-datasource', style={'display': 'none'}),  # 隐藏状态变量，用于跟踪编辑模式
                 fac.AntdFormItem(
                     fac.AntdInput(id='datasource-name', placeholder='请输入数据源名称'),
                     label='数据源名称',

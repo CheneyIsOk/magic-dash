@@ -4,7 +4,7 @@
 
 
 ## 项目结构
-
+```text
 magic-dash/
 ├── assets/             # 静态资源文件（CSS样式、图片、JS脚本等）
 │   ├── css/           # CSS样式文件
@@ -27,7 +27,7 @@ magic-dash/
 ├── README.md          # 项目说明文件
 ├── .env.template      # 环境变量模板文件
 └── .gitignore         # Git忽略文件配置
-
+```
 
 ## 项目启动方式
 
@@ -43,8 +43,12 @@ pip install -r requirements.txt
 
 3. 启动应用：
 ```bash
+# 个人本地环境 
+conda activate web-dev
+
+# 启动应用
 python app.py
-   ```
+```
 
 4. 访问地址：
 - 本地访问: http://localhost:8050

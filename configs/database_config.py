@@ -1,6 +1,6 @@
 from typing import Literal
 import pathlib
-from peewee import SqliteDatabase, CharField, IntegerField
+from peewee import SqliteDatabase, CharField, IntegerField, Model
 
 
 DATA_SOURCE_DB = "data_source.db"
@@ -10,7 +10,7 @@ source_db_path = pathlib.Path(__file__).parent.parent / "database" / DATA_SOURCE
 source_db = SqliteDatabase(source_db_path)
 
 
-class DataSourceModel():
+class DataSourceModel(Model):
     """ 保存的数据源表模型 """
     name = CharField(max_length=128, unique=True)
     type = CharField(max_length=32)
@@ -23,6 +23,12 @@ class DataSourceModel():
     class Meta:
         database = source_db
         table_name = DATA_SOURCE_TABLE_NAME
+
+# 确保数据库表存在
+source_db.connect()
+if not source_db.table_exists(DATA_SOURCE_TABLE_NAME):
+    source_db.create_tables([DataSourceModel])
+source_db.close()
 
 
 class DatabaseConfig:
