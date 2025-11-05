@@ -1,8 +1,8 @@
 import feffery_antd_components as fac
 from dash import html
-import callbacks.core_pages_c.data_source_c as data_source_c
-
 from configs.database_config import DataSourceModel
+
+import callbacks.core_pages_c.data_source_c as data_source_c
 
 
 def load_datasource_data():
@@ -20,7 +20,7 @@ def load_datasource_data():
                 'host': ds.host,
                 'port': str(ds.port),
                 'username': ds.username,
-                'status': '已连接',
+                'database': ds.database,
                 'action': fac.AntdSpace([
                     fac.AntdButton('编辑', type='primary', size='small', id={'type': 'edit-btn', 'index': ds.name}),
                     fac.AntdButton('删除', type='primary', danger=True, size='small', id={'type': 'delete-btn', 'index': ds.name})
@@ -53,7 +53,7 @@ def render():
                 {'title': '主机地址', 'dataIndex': 'host', 'key': 'host'},
                 {'title': '端口', 'dataIndex': 'port', 'key': 'port'},
                 {'title': '用户名', 'dataIndex': 'username', 'key': 'username'},
-                {'title': '状态', 'dataIndex': 'status', 'key': 'status'},
+                {'title': '数据库', 'dataIndex': 'database', 'key': 'database'},
                 {'title': '操作', 'dataIndex': 'action', 'key': 'action'},
             ],
             data=datasource_data,

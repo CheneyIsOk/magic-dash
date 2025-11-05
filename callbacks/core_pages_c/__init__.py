@@ -19,7 +19,6 @@ from server import app
 from views.status_pages import _404
 from views.core_pages import (
     index,
-    page1,
     sub_menu_page1,
     sub_menu_page2,
     sub_menu_page3,
@@ -154,11 +153,6 @@ def core_router(
     if pathname == "/":
         # 更新页面返回内容
         page_content = index.render()
-
-    # 以主要页面1做简单示例
-    elif pathname == "/core/page1":
-        # 更新页面返回内容
-        page_content = page1.render()
 
     # 以子菜单演示1做简单示例
     elif pathname == "/core/sub-menu-page1":

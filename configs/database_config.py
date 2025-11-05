@@ -4,7 +4,7 @@ from peewee import SqliteDatabase, CharField, IntegerField, Model
 
 
 DATA_SOURCE_DB = "data_source.db"
-DATA_SOURCE_TABLE_NAME = "data_source"
+DATA_SOURCE_TABLE_NAME = "data_source_tbl"
 
 source_db_path = pathlib.Path(__file__).parent.parent / "database" / DATA_SOURCE_DB
 source_db = SqliteDatabase(source_db_path)

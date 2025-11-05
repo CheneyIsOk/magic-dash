@@ -65,6 +65,7 @@ venv.bak/
 
 # IDEs
 .vscode/
+.trae/
 .idea/
 *.swp
 *.swo

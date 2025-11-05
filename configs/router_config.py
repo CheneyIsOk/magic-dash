@@ -27,15 +27,6 @@ class RouterConfig:
                     },
                 },
                 {
-                    "component": "Item",
-                    "props": {
-                        "title": "主要页面1",
-                        "key": "/core/page1",
-                        "icon": "antd-app-store",
-                        "href": "/core/page1",
-                    },
-                },
-                {
                     "component": "SubMenu",
                     "props": {
                         "key": "子菜单演示",

@@ -6,27 +6,34 @@
 ## 项目结构
 ```text
 magic-dash/
-├── assets/             # 静态资源文件（CSS样式、图片、JS脚本等）
-│   ├── css/           # CSS样式文件
-│   ├── imgs/          # 图片资源
-│   ├── js/            # JavaScript脚本文件
-│   └── videos/        # 视频资源
-├── callbacks/          # 回调逻辑层（处理前端交互逻辑）
-│   └── core_pages_c/  # 核心页面回调逻辑
-├── components/         # 可复用UI组件封装
-├── configs/            # 配置中心（认证、数据库、路由、布局等系统配置）
-├── database/           # 数据库文件目录
-├── models/             # 数据模型层（使用peewee定义用户、日志等实体）
-├── utils/              # 工具脚本（如清理缓存文件）
-├── views/              # 视图层（页面布局模块）
-│   ├── core_pages/    # 核心页面视图
-│   └── status_pages/  # 状态页面视图（403、404、500等）
-├── app.py             # 应用入口文件
-├── server.py          # 服务配置文件
-├── requirements.txt   # 项目依赖文件
-├── README.md          # 项目说明文件
-├── .env.template      # 环境变量模板文件
-└── .gitignore         # Git忽略文件配置
+├── assets/                 # 静态资源文件（CSS样式、图片、JS脚本等）
+│   ├── css/                # CSS样式文件
+│   ├── imgs/               # 图片资源
+│   ├── js/                 # JavaScript脚本文件
+│   └── videos/             # 视频资源
+├── callbacks/              # 回调逻辑层（处理前端交互逻辑）
+│   └── core_pages_c/       # 核心页面回调逻辑
+├── dq_checks/              # 数据质量监控SQL及配置（数据质量插件库）
+│   ├── sql/                # 存放SQL文件（纯SQL语句，便于复用）
+│   │   ├── freshness/      # 数据新鲜度监控SQL
+│   │   ├── completeness/   # 数据完整性监控SQL
+│   │   ├── accuracy/       # 数据准确性监控SQL
+│   │   ├── consistency/    # 数据一致性监控SQL
+│   └── └── metadata/       # 数据元数据监控SQL
+├── components/             # 可复用UI组件封装
+├── configs/                # 配置中心（认证、数据库、路由、布局等系统配置）
+├── database/               # 数据库文件目录
+├── models/                 # 数据模型层（使用peewee定义用户、日志等实体）
+├── utils/                  # 工具脚本（如清理缓存文件）
+├── views/                  # 视图层（页面布局模块）
+│   ├── core_pages/        # 核心页面视图（如数据质量监控、用户管理等）
+│   └── status_pages/      # 状态页面视图（403、404、500等）
+├── app.py                 # 应用入口文件
+├── server.py              # 服务配置文件
+├── requirements.txt       # 项目依赖文件
+├── README.md              # 项目说明文件
+├── .env.template          # 环境变量模板文件
+└── .gitignore             # Git忽略文件配置
 ```
 
 ## 项目启动方式
