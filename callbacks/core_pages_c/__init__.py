@@ -30,6 +30,7 @@ from views.core_pages import (
     
     # 新增页面
     data_source_page,
+    data_quality_page,
 )
 
 # 路由配置参数
@@ -184,10 +185,15 @@ def core_router(
         # 更新页面返回内容
         page_content = url_params_page.render(current_url=current_url)
     
-    # 新增页面-数据来源页
+    # 新增页面-数据源管理
     if pathname == "/core/data-source-page":
         # 更新页面返回内容
         page_content = data_source_page.render()
+    
+    # 新增页面-数据质量检查页
+    elif pathname == "/core/data-quality-page":
+        # 更新页面返回内容
+        page_content = data_quality_page.render()
 
     # 系统管理相关页面
     # 日志管理-登录日志

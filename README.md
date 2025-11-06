@@ -40,6 +40,9 @@ magic-dash/
 
 1. 安装依赖：
 ```bash
+# 个人本地环境 
+conda activate web-dev
+
 pip install -r requirements.txt
 ```
 
@@ -50,9 +53,6 @@ pip install -r requirements.txt
 
 3. 启动应用：
 ```bash
-# 个人本地环境 
-conda activate web-dev
-
 # 启动应用
 python app.py
 ```
@@ -99,4 +99,13 @@ python app.py
 
 6. **响应式布局**
    - 基于Ant Design的响应式页面布局
-   - 支持全屏水印功能
+
+
+## TODO
+- 【数据库管理】缓存数据库连接，所有页面复用一个连接池，避免重复连接
+   * 通过 @lru_cache + SQLAlchemy连接池 + Flask-Caching
+- 【后台定时任务】数据质量检查实现定时自动触发检查
+   * 前台手动触发-后台定时任务，结果入库，独立页面显示数据趋势和问题明细。
+   * 通过定时调度框架（如 APScheduler/Dagster/Perfect/Airflow），实现每日自动运行。
+   * 配置文件中指定检查规则、目标数据库、目标表、通知方式（邮箱/短信/微信等）。
+   * 执行控制： 手动触发、自动触发、暂停/恢复（可选）、取消任务。

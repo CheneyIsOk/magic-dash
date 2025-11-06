@@ -1,62 +1,132 @@
-from re import M
-from peewee import SqliteDatabase, PostgresqlDatabase, MySQLDatabase, Model
+import psycopg2
+import pymysql
+from configs.database_config import DataSourceModel
+from peewee import SqliteDatabase
 
+def get_tables(dbmodel=DataSourceModel, selected_db=None):
+    """获取数据库中的所有表名"""
+    try:
+        if selected_db:
+            # 获取特定数据源的表
+            datasource = dbmodel.get(dbmodel.name == selected_db)
+            return _get_tables_from_datasource(datasource)
+        else:
+            # 获取所有数据源的表
+            datasources = dbmodel.select()
+            all_tables = []
+            for datasource in datasources:
+                tables = _get_tables_from_datasource(datasource)
+                all_tables.extend(tables)
+            return all_tables
+    except Exception as e:
+        print(f"获取表列表失败: {e}")
+        return []
 
+def _get_tables_from_datasource(datasource):
+    """从单个数据源获取表列表"""
+    try:
+        if datasource.type == 'sqlite':
+            # SQLite数据库
+            db = SqliteDatabase(datasource.database)
+            tables = db.get_tables()
+            return [{'datasource': datasource.name, 'table': table} for table in tables]
+        
+        elif datasource.type == 'postgresql':
+            # PostgreSQL数据库
+            conn = psycopg2.connect(
+                host=datasource.host,
+                port=datasource.port,
+                user=datasource.username,
+                password=datasource.password,
+                database=datasource.database
+            )
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT table_name 
+                FROM information_schema.tables 
+                WHERE table_schema = 'public'
+            """)
+            tables = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            conn.close()
+            return [{'datasource': datasource.name, 'table': table} for table in tables]
+        
+        elif datasource.type == 'mysql':
+            # MySQL数据库
+            conn = pymysql.connect(
+                host=datasource.host,
+                port=datasource.port,
+                user=datasource.username,
+                password=datasource.password,
+                database=datasource.database
+            )
+            cursor = conn.cursor()
+            cursor.execute("SHOW TABLES")
+            tables = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            conn.close()
+            return [{'datasource': datasource.name, 'table': table} for table in tables]
+        
+        else:
+            return []
+    except Exception as e:
+        print(f"从数据源 {datasource.name} 获取表列表失败: {e}")
+        return []
 
-def get_tables(dbmodel: Model, selected_db='all'):
-    """根据数据源模型获取所有数据源的表信息"""
-
-    if selected_db != 'all' and selected_db != None: 
-        data_sources = dbmodel.select().where(dbmodel.name == selected_db)
-    else:
-        data_sources = dbmodel.select()
-
-    records= []
-    all_tables= []
-    for ds in data_sources:
-        records.append({
-            'name': ds.name,
-            'type': ds.type,
-            'host': ds.host,
-            'port': ds.port,
-            'username': ds.username,
-            'password': ds.password,
-            'database': ds.database
-        })
-        # 连接record对应的数据库并获取其下数据库表
-        try:
-            # 根据数据源类型创建相应的数据库连接
-            if ds.type.lower() == 'sqlite':
-                # SQLite数据库
-                db_conn = SqliteDatabase(ds.database)
-            elif ds.type.lower() == 'postgresql':
-                # PostgreSQL数据库
-                db_conn = PostgresqlDatabase(
-                    ds.database,
-                    host=ds.host,
-                    port=ds.port,
-                    user=ds.username,
-                    password=ds.password
-                )
-            elif ds.type.lower() == 'mysql':
-                # MySQL数据库
-                db_conn = MySQLDatabase(
-                    ds.database,
-                    host=ds.host,
-                    port=ds.port,
-                    user=ds.username,
-                    passwd=ds.password
-                )
-            else:
-                print(f"不支持的数据库类型: {ds.type}")
-                continue
-            
-            # 连接数据库并获取表列表
-            db_conn.connect()
-            tables = db_conn.get_tables()
-            all_tables.extend(tables)
-            print(f"数据源 '{ds.name}' ({ds.type}) 下的表: {tables}")
-            db_conn.close()
-        except Exception as e:
-            print(f"连接数据源 '{ds.name}' 时出错: {e}")
-    return all_tables
+def get_columns(datasource_name, table_name):
+    """获取指定表的字段列表"""
+    try:
+        # 获取数据源信息
+        datasource = DataSourceModel.get(DataSourceModel.name == datasource_name)
+        
+        if datasource.type == 'sqlite':
+            # SQLite数据库
+            db = SqliteDatabase(datasource.database)
+            # SQLite没有直接获取字段信息的方法，需要执行查询
+            return ['id', 'name', 'email', 'created_at']  # 示例字段
+        
+        elif datasource.type == 'postgresql':
+            # PostgreSQL数据库
+            conn = psycopg2.connect(
+                host=datasource.host,
+                port=datasource.port,
+                user=datasource.username,
+                password=datasource.password,
+                database=datasource.database
+            )
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_schema = 'public' AND table_name = %s
+            """, (table_name,))
+            columns = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            conn.close()
+            return columns
+        
+        elif datasource.type == 'mysql':
+            # MySQL数据库
+            conn = pymysql.connect(
+                host=datasource.host,
+                port=datasource.port,
+                user=datasource.username,
+                password=datasource.password,
+                database=datasource.database
+            )
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = %s
+            """, (table_name,))
+            columns = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            conn.close()
+            return columns
+        
+        else:
+            return []
+    except Exception as e:
+        print(f"获取表 {table_name} 的字段列表失败: {e}")
+        return []

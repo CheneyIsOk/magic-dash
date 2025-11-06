@@ -92,6 +92,33 @@ class RouterConfig:
         {
             "component": "ItemGroup",
             "props": {
+                "title": "数据质量",
+                "key": "数据质量",
+            },
+            "children": [
+                {
+                    "component": "Item",
+                    "props": {
+                        "title": "数据源管理",
+                        "key": "/core/data-source-page",
+                        "icon": "antd-file",
+                        "href": "/core/data-source-page",
+                    },
+                },
+                {
+                    "component": "Item",
+                    "props": {
+                        "title": "数据质量检查",
+                        "key": "/core/data-quality-page",
+                        "icon": "pi-crosshair",
+                        "href": "/core/data-quality-page",
+                    },
+                },
+            ],
+        },
+        {
+            "component": "ItemGroup",
+            "props": {
                 "title": "系统管理",
                 "key": "系统管理",
             },
@@ -117,33 +144,6 @@ class RouterConfig:
                 },
             ],
         },
-        {
-            "component": "ItemGroup",
-            "props": {
-                "title": "其他页面",
-                "key": "其他页面",
-            },
-            "children": [
-                {
-                    "component": "Item",
-                    "props": {
-                        "title": "其他页面1",
-                        "key": "/core/other-page1",
-                        "icon": "antd-app-store",
-                        "href": "/core/other-page1",
-                    },
-                },
-                {
-                    "component": "Item",
-                    "props": {
-                        "title": "数据来源页",
-                        "key": "/core/data-source-page",
-                        "icon": "antd-file",
-                        "href": "/core/data-source-page",
-                    },
-                },
-            ],
-        },
     ]
 
     # 通配页面模式字典
@@ -164,10 +164,10 @@ class RouterConfig:
         "/core/independent-wildcard-page": "独立通配页面渲染入口页",
         "/core/url-params-page": "url参数提取示例",
         "/core/login-logs": "登录日志",
-        "/core/other-page1": "其他页面1",
         
         # 新增页面
-        "/core/data-source-page": "数据来源页",
+        "/core/data-source-page": "数据源管理",
+        "/core/data-quality-page": "数据质量检查",
         
         "/403-demo": "403状态页演示",
         "/404-demo": "404状态页演示",

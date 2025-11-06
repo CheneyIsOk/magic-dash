@@ -38,6 +38,8 @@ def render():
     datasource_data = load_datasource_data()
     
     return fac.AntdSpace([
+        fac.AntdBreadcrumb(items=[{"title": "数据质量"}, {"title": "数据源管理"}]),
+        
         fac.AntdRow([
             fac.AntdCol(
                 fac.AntdButton('添加数据源', type='primary', icon=fac.AntdIcon(icon='antd-database'), id='add-datasource-btn'),
