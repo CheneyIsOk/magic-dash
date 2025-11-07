@@ -3,6 +3,8 @@ import feffery_antd_components as fac
 from configs.database_config import DataSourceModel
 from peewee import SqliteDatabase, PostgresqlDatabase, MySQLDatabase
 from utils.get_tables import get_tables
+from utils.get_rules import get_dq_rules
+from pathlib import Path
 
 
 @callback(
@@ -14,7 +16,7 @@ from utils.get_tables import get_tables
     ],
     Input('datasource-filter', 'value')
 )
-def update_statistics(selected_datasource):
+def update_statistics(selected_datasource: str) -> list:
     """根据选择的数据源更新统计信息"""
     
     try:
@@ -28,16 +30,18 @@ def update_statistics(selected_datasource):
             all_tables = get_tables(dbmodel=DataSourceModel, selected_db=selected_datasource)
             datasource_count = len(all_tables)
         
-        # TODO: 目前使用模拟数据，后续可以接入真实的数据质量统计
+        # 基于项目内置规则统计质量规则数量
+        project_dir = Path(__file__).resolve().parents[2]
+        dq_rules = get_dq_rules(project_dir)
+        quality_rules_count = len(dq_rules)
+
+        # 其他统计暂时保留模拟数据，后续接入真实统计
         if selected_datasource == 'all':
-            quality_rules_count = 15  # 全部数据源的质量规则总数
-            daily_checks_count = 156  # 全部数据源的今日检查总数
-            problem_data_count = 23   # 全部数据源的问题数据总数
+            daily_checks_count = 156  # 全部数据源的今日检查总数（模拟）
+            problem_data_count = 23   # 全部数据源的问题数据总数（模拟）
         else:
-            # 单个数据源的模拟统计
-            quality_rules_count = 5
-            daily_checks_count = 42
-            problem_data_count = 5
+            daily_checks_count = 42   # 单个数据源的今日检查总数（模拟）
+            problem_data_count = 5    # 单个数据源的问题数据总数（模拟）
 
         return [
             datasource_count,
@@ -56,7 +60,7 @@ def update_statistics(selected_datasource):
     Output('datasource-filter', 'options'),
     Input('datasource-filter', 'id')  # 使用组件ID作为触发器，页面加载时执行
 )
-def refresh_datasource_options(_):
+def refresh_datasource_options(_: str) -> list:
     """刷新数据源选项列表"""
     try:
         query = DataSourceModel.select()
