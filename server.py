@@ -6,6 +6,7 @@ from flask_login import LoginManager, UserMixin, current_user, AnonymousUserMixi
 
 # 应用基础参数
 from models.users import Users
+from flask_caching import Cache
 from configs import BaseConfig, AuthConfig
 
 app = dash.Dash(
@@ -20,6 +21,12 @@ server = app.server
 # 设置应用密钥
 app.server.config["SECRET_KEY"] = BaseConfig.app_secret_key
 app.server.config["SESSION_COOKIE_NAME"] = BaseConfig.app_session_cookie_name
+
+# 配置应用级缓存（SimpleCache内存缓存）
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'SimpleCache',
+    'CACHE_DEFAULT_TIMEOUT': 300
+})
 
 # 为当前应用添加flask-login用户登录管理
 login_manager = LoginManager()

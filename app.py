@@ -40,6 +40,8 @@ app.layout = lambda: fuc.FefferyTopProgress(
         fuc.FefferyReload(id="global-reload"),
         # 全局文件下载
         dcc.Download(id="global-download"),
+        # 全局当前活跃数据源（跨页面共享）
+        dcc.Store(id="active-datasource", data="all"),
         *(
             [
                 # 重复登录辅助检查轮询
