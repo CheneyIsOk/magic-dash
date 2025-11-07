@@ -21,12 +21,11 @@ def update_statistics(selected_datasource: str) -> list:
     
     try:
         # 获取数据表数量
-        if selected_datasource == 'all':
+        if selected_datasource == 'all' or selected_datasource is None:
             all_tables = get_tables(dbmodel=DataSourceModel)
             datasource_count = len(all_tables)
         else:
             # 选择了特定数据源
-            print(f"selected specific datasource: {selected_datasource}")
             all_tables = get_tables(dbmodel=DataSourceModel, selected_db=selected_datasource)
             datasource_count = len(all_tables)
         
@@ -78,3 +77,13 @@ def refresh_datasource_options(_: str) -> list:
     except Exception as e:
         print(f"刷新数据源选项失败: {e}")
         return [{'label': '全部数据源', 'value': 'all'}]
+
+
+@callback(
+    Output('active-datasource', 'data'),
+    Input('datasource-filter', 'value'),
+    prevent_initial_call=True
+)
+def sync_active_datasource(selected_datasource: str) -> str:
+    """同步全局当前活跃数据源Store"""
+    return selected_datasource or 'all'

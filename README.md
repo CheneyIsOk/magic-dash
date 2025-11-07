@@ -71,6 +71,8 @@ python app.py
 - **工具库**: feffery_dash_utils, feffery_utils_components, user_agents, flask-compress, flask-principal
 - **数据处理**: pandas（==2.3.3）, duckdb（==1.4.1）
 - **数据库驱动**: psycopg2-binary（PostgreSQL支持）
+ - **ORM/连接池**: SQLAlchemy（==2.0.44）用于统一连接与反射
+ - **缓存**: Flask-Caching（==2.3.0）用于元数据查询缓存
 
 
 ## 核心功能模块
@@ -102,8 +104,40 @@ python app.py
 
 
 ## TODO
-- 【数据库管理】缓存数据库连接，所有页面复用一个连接池，避免重复连接
-   * 通过 @lru_cache + SQLAlchemy连接池 + Flask-Caching
+- 【数据库管理】缓存数据库连接，所有页面复用一个连接池，避免重复连接（已完成MVP）
+   * 通过 @lru_cache + SQLAlchemy连接池 + Flask-Caching（已集成）
+   * 新增 utils/db_pool.py：统一构建 Engine、提供 get_connection 上下文、invalidate_engine 失效机制
+   * 迁移 utils/get_tables.py：使用 SQLAlchemy inspector 获取表/列，并添加缓存 @cache.memoize
+   * 在 callbacks/core_pages_c/data_source_c.py 的新增/编辑/删除后，清理连接池缓存与应用缓存
+   * 全局注入 dcc.Store(id='active-datasource')，首页筛选器维护该值，用于跨页共享当前活跃数据源
+   * 后续计划：其他页面统一读取 active-datasource，完善上下文管理与并发测试
+```
+一、数据库连接池与缓存策略
+
+为避免跨页面频繁建立数据库连接、提升性能与稳定性，项目实现了统一的连接管理与缓存方案：
+- 连接管理
+  * 工具模块：utils/db_pool.py
+  * 基于 SQLAlchemy Engine + @lru_cache 实现按数据源名称复用连接
+  * 提供 get_connection(name) 上下文管理，确保连接安全归还
+  * invalidate_engine(name) 失效接口，在数据源配置变更/删除后清理缓存，避免旧连接
+
+- 元数据缓存
+  * 应用级缓存：Flask-Caching SimpleCache
+  * get_tables/get_columns 使用 @cache.memoize 缓存结果
+  * 在数据源新增/编辑/删除后，统一 cache.clear() 失效缓存，确保反射元数据最新
+
+- 全局活跃数据源状态
+  * app.py 中注入 dcc.Store(id='active-datasource', data='all')
+  * 首页数据源筛选器变化时同步更新该 Store（callbacks/core_pages_c/index_c.py）
+  * 其他页面可读取该 Store，避免重复建立连接与参数传递
+
+二、使用建议
+- 执行数据库查询时优先通过 utils/db_pool.get_engine_by_name 或 get_connection(name) 获取连接
+- 若编写新的元数据读取函数，考虑添加 @cache.memoize 并在数据源变更场景清理缓存
+- 若数据源配置发生变化（名称、主机、库名等），确保调用 invalidate_engine 并清理缓存
+- 避免在页面回调中频繁创建新 Engine 或直接使用底层驱动连接，统一走连接池
+```
+
 - 【后台定时任务】数据质量检查实现定时自动触发检查
    * 前台手动触发-后台定时任务，结果入库，独立页面显示数据趋势和问题明细。
    * 通过定时调度框架（如 APScheduler/Dagster/Perfect/Airflow），实现每日自动运行。

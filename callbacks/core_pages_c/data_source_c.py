@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
 from dash import Input, Output, State, callback, ALL, callback_context
 from configs.database_config import DataSourceModel, source_db
+from utils.db_pool import invalidate_engine
+from server import cache
 
 
 @callback(
@@ -74,8 +76,18 @@ def validate_datasource_connection(n_clicks, datasource_name, datasource_type, d
     ],
     prevent_initial_call=True
 )
-def save_datasource_connection(n_clicks, datasource_name, datasource_type, datasource_host, datasource_port, 
-                              datasource_database, datasource_username, datasource_password, current_data, editing_datasource):
+def save_datasource_connection(
+    n_clicks: int,
+    datasource_name: str,
+    datasource_type: str,
+    datasource_host: str,
+    datasource_port: int,
+    datasource_database: str,
+    datasource_username: str,
+    datasource_password: str,
+    current_data,
+    editing_datasource: str,
+):
     """ 点击保存按钮，保存数据库连接信息到data_source.db """
     if not all([datasource_name, datasource_type, datasource_host, datasource_port, datasource_database, datasource_username, datasource_password]):
         return current_data, True, '请填写完整的数据库连接信息', {'color': 'red'}
@@ -136,6 +148,17 @@ def save_datasource_connection(n_clicks, datasource_name, datasource_type, datas
                         password=datasource_password
                     )
                 
+                # 连接池缓存失效：编辑或新增后确保后续使用最新配置
+                try:
+                    # 编辑模式若改名，失效旧名与新名；新增清理全局缓存即可
+                    if is_editing and editing_datasource != datasource_name:
+                        invalidate_engine(editing_datasource)
+                    invalidate_engine(datasource_name)
+                    # 清理应用级元数据缓存，确保后续查询命中最新配置
+                    cache.clear()
+                except Exception as _:
+                    pass
+
                 # 重新加载表格数据
                 from views.core_pages.data_source_page import load_datasource_data
                 updated_data = load_datasource_data()
@@ -177,6 +200,12 @@ def delete_datasource(n_clicks_list, current_data):
         # 从数据库删除数据源
         with source_db.atomic():
             DataSourceModel.delete().where(DataSourceModel.name == datasource_name).execute()
+        # 连接池缓存失效：删除后清理对应连接
+        try:
+            invalidate_engine(datasource_name)
+            cache.clear()
+        except Exception as _:
+            pass
         
         # 重新加载表格数据
         from views.core_pages.data_source_page import load_datasource_data
