@@ -10,6 +10,7 @@ class RouterConfig:
 
     # 核心页面侧边菜单完整结构
     core_side_menu: List[dict] = [
+        # 主要页面
         {
             "component": "ItemGroup",
             "props": {
@@ -60,35 +61,10 @@ class RouterConfig:
                         },
                     ],
                 },
-                {
-                    "component": "Item",
-                    "props": {
-                        "title": "独立页面渲染入口页",
-                        "key": "/core/independent-page",
-                        "icon": "antd-app-store",
-                        "href": "/core/independent-page",
-                    },
-                },
-                {
-                    "component": "Item",
-                    "props": {
-                        "title": "独立通配页面渲染入口页",
-                        "key": "/core/independent-wildcard-page",
-                        "icon": "antd-app-store",
-                        "href": "/core/independent-wildcard-page",
-                    },
-                },
-                {
-                    "component": "Item",
-                    "props": {
-                        "title": "url参数提取示例",
-                        "key": "/core/url-params-page",
-                        "icon": "antd-link",
-                        "href": "/core/url-params-page",
-                    },
-                },
             ],
         },
+        
+        # 数据质量
         {
             "component": "ItemGroup",
             "props": {
@@ -96,15 +72,6 @@ class RouterConfig:
                 "key": "数据质量",
             },
             "children": [
-                {
-                    "component": "Item",
-                    "props": {
-                        "title": "数据源管理",
-                        "key": "/core/data-source-page",
-                        "icon": "antd-file",
-                        "href": "/core/data-source-page",
-                    },
-                },
                 {
                     "component": "Item",
                     "props": {
@@ -116,6 +83,8 @@ class RouterConfig:
                 },
             ],
         },
+        
+        # 系统管理
         {
             "component": "ItemGroup",
             "props": {
@@ -123,6 +92,15 @@ class RouterConfig:
                 "key": "系统管理",
             },
             "children": [
+                {
+                    "component": "Item",
+                    "props": {
+                        "title": "数据源管理",
+                        "key": "/core/data-source-page",
+                        "icon": "antd-database",
+                        "href": "/core/data-source-page",
+                    },
+                },
                 {
                     "component": "SubMenu",
                     "props": {
@@ -146,11 +124,6 @@ class RouterConfig:
         },
     ]
 
-    # 通配页面模式字典
-    wildcard_patterns: dict = {
-        "独立通配页面演示": re.compile(r"^/core/independent-wildcard-page/demo/(.*?)$")
-    }
-
     # 有效页面pathname地址 -> 页面标题映射字典
     valid_pathnames: dict = {
         "/login": "登录页",
@@ -172,17 +145,7 @@ class RouterConfig:
         "/403-demo": "403状态页演示",
         "/404-demo": "404状态页演示",
         "/500-demo": "500状态页演示",
-        # 独立渲染页面
-        "/core/independent-page/demo": "独立页面演示示例",
-        # 独立通配渲染页面
-        wildcard_patterns["独立通配页面演示"]: "独立通配页面演示示例",
     }
-
-    # 独立渲染展示的核心页面
-    independent_core_pathnames: List[Union[str, re.Pattern]] = [
-        "/core/independent-page/demo",
-        wildcard_patterns["独立通配页面演示"],
-    ]
 
     # 无需权限校验的公开页面
     public_pathnames: List[str] = [

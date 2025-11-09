@@ -70,30 +70,6 @@ def render(current_user_access_rule: str, current_pathname: str = None):
         current_pathname (str, optional): 当前页面pathname. Defaults to None.
     """
 
-    # 判断是否需要独立渲染
-    if current_pathname in RouterConfig.independent_core_pathnames:
-        # 返回不同地址规则对应页面内容
-        if current_pathname == "/core/independent-page/demo":
-            return independent_page_demo.render()
-
-    # 判断是否需要独立通配渲染
-    elif any(
-        pattern.match(current_pathname)
-        for pattern in RouterConfig.independent_core_pathnames
-        if isinstance(pattern, re.Pattern)
-    ):
-        # 获取命中当前地址的第一个通配规则
-        match_pattern = None
-        for pattern in RouterConfig.independent_core_pathnames:
-            if isinstance(pattern, re.Pattern):
-                if pattern.match(current_pathname):
-                    # 更新命中的通配规则
-                    match_pattern = pattern
-                    break
-        # 返回不同地址通配规则对应页面内容
-        if match_pattern == RouterConfig.wildcard_patterns["独立通配页面演示"]:
-            return independent_wildcard_page_demo.render(pathname=current_pathname)
-
     return html.Div(
         [
             # 核心页面常量参数数据

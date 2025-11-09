@@ -123,7 +123,7 @@ def generate_dynamic_params(rule_template):
         dimension, template_name = parts
         
         # 构建SQL文件路径
-        sql_file_path = PROJECT_ROOT / "dq_checks" / "sql" / dimension / f"{template_name}.sql"
+        sql_file_path = PROJECT_ROOT / "core" / "sql" / dimension / f"{template_name}.sql"
         
         if not sql_file_path.exists():
             return []
@@ -190,7 +190,7 @@ def execute_data_quality_check(
     """执行数据质量检查（示例）
 
     说明：保持 KISS，当前仅构造示例结果与日志；
-    后续接入 dq_checks/sql 的真实执行时在此扩展。
+    后续接入 core/sql 的真实执行时在此扩展。
     """
 
     if not n_clicks:
@@ -226,7 +226,7 @@ def execute_data_quality_check(
             if len(parts) != 2:
                 raise ValueError('规则模板格式不正确，应为 <dimension>/<template>')
             dimension, template_name = parts
-            sql_file_path = PROJECT_ROOT / "dq_checks" / "sql" / dimension / f"{template_name}.sql"
+            sql_file_path = PROJECT_ROOT / "core" / "sql" / dimension / f"{template_name}.sql"
             if not sql_file_path.exists():
                 raise FileNotFoundError(f"规则SQL文件不存在: {sql_file_path}")
 

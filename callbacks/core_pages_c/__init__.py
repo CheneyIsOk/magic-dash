@@ -186,7 +186,7 @@ def core_router(
         page_content = url_params_page.render(current_url=current_url)
     
     # 新增页面-数据源管理
-    if pathname == "/core/data-source-page":
+    elif pathname == "/core/data-source-page":
         # 更新页面返回内容
         page_content = data_source_page.render()
     

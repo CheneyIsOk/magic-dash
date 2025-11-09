@@ -3,10 +3,10 @@ def get_dq_rules(proj_dir):
     rules = []
     
     # 规则目录路径
-    dq_checks_path = proj_dir / "dq_checks" / "sql"
+    core_path = proj_dir / "core" / "sql"
     # 遍历所有质量维度目录
-    if dq_checks_path.exists():
-        for dimension_dir in dq_checks_path.iterdir():
+    if core_path.exists():
+        for dimension_dir in core_path.iterdir():
             if dimension_dir.is_dir():
                 # 遍历目录中的所有SQL文件
                 for sql_file in dimension_dir.iterdir():
