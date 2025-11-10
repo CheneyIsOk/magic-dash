@@ -22,44 +22,19 @@ def load_datasource_options():
         print(f"加载数据源选项失败: {e}")
         return [{'label': '全部数据源', 'value': 'all'}]
 
-# 模拟数据质量规则
-quality_rules = []
-
 
 def render():
     """子页面：首页渲染简单示例"""
-    # 加载数据源选项
-    datasource_options = load_datasource_options()
-    
     return fac.AntdSpace(
         [
             fac.AntdBreadcrumb(items=[{"title": "主要页面"}, {"title": "首页"}]),
-            
-            # 数据源筛选器
-            fac.AntdRow([
-                fac.AntdCol(
-                    fac.AntdFormItem(
-                        fac.AntdSelect(
-                            id='datasource-filter',
-                            options=datasource_options,
-                            defaultValue='all',
-                            placeholder='请选择数据源',
-                            style={'width': '200px'}
-                        ),
-                        label='数据源筛选',
-                    ),
-                    span=24,
-                    style={'textAlign': 'right', 'marginBottom': '16px'}
-                )
-            ]),
-            
+
             # 首页统计卡片
             fac.AntdRow([
                 fac.AntdCol(
                     fac.AntdCard(
                         fac.AntdStatistic(
                             id='datasource-table-statistic',
-                            # value=len([opt for opt in datasource_options if opt['value'] != 'all']),
                             valueStyle={'color': '#1890ff'},
                             prefix=fac.AntdIcon(icon='antd-database'),
                         ),
@@ -73,7 +48,7 @@ def render():
                     fac.AntdCard(
                         fac.AntdStatistic(
                             id='quality-rules-statistic',
-                            value=len(quality_rules),
+                            value="",
                             valueStyle={'color': '#52c41a'},
                             prefix=fac.AntdIcon(icon='antd-bulb'),
                         ),

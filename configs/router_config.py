@@ -27,43 +27,38 @@ class RouterConfig:
                         "href": "/",
                     },
                 },
-                {
-                    "component": "SubMenu",
-                    "props": {
-                        "key": "子菜单演示",
-                        "title": "子菜单演示",
-                        "icon": "antd-catalog",
-                    },
-                    "children": [
-                        {
-                            "component": "Item",
-                            "props": {
-                                "key": "/core/sub-menu-page1",
-                                "title": "子菜单演示1",
-                                "href": "/core/sub-menu-page1",
-                            },
-                        },
-                        {
-                            "component": "Item",
-                            "props": {
-                                "key": "/core/sub-menu-page2",
-                                "title": "子菜单演示2",
-                                "href": "/core/sub-menu-page2",
-                            },
-                        },
-                        {
-                            "component": "Item",
-                            "props": {
-                                "key": "/core/sub-menu-page3",
-                                "title": "子菜单演示3",
-                                "href": "/core/sub-menu-page3",
-                            },
-                        },
-                    ],
-                },
             ],
         },
-        
+
+        # 数据资产
+        {
+            "component": "ItemGroup",
+            "props": {
+                "title": "数据资产",
+                "key": "数据资产",
+            },
+            "children": [
+                {
+                    "component": "Item",
+                    "props": {
+                        "title": "资产盘点",
+                        "key": "/core/asset-inventory",
+                        "icon": "antd-file-text",
+                        "href": "/core/asset-inventory",
+                    },
+                },
+                {
+                    "component": "Item",
+                    "props": {
+                        "title": "数据发现",
+                        "key": "/core/asset-search",
+                        "icon": "antd-file-search",
+                        "href": "/core/asset-search",
+                    },
+                },
+            ]
+        },    
+
         # 数据质量
         {
             "component": "ItemGroup",
@@ -130,15 +125,11 @@ class RouterConfig:
         "/": "首页",
         index_pathname: "首页",
         "/core/page1": "主要页面1",
-        "/core/sub-menu-page1": "子菜单演示1",
-        "/core/sub-menu-page2": "子菜单演示2",
-        "/core/sub-menu-page3": "子菜单演示3",
-        "/core/independent-page": "独立页面渲染入口页",
-        "/core/independent-wildcard-page": "独立通配页面渲染入口页",
-        "/core/url-params-page": "url参数提取示例",
         "/core/login-logs": "登录日志",
         
         # 新增页面
+        "/core/asset-inventory": "资产盘点",
+        "/core/asset-search": "资产搜索",
         "/core/data-source-page": "数据源管理",
         "/core/data-quality-page": "数据质量检查",
         

@@ -19,16 +19,15 @@ from server import app
 from views.status_pages import _404
 from views.core_pages import (
     index,
-    sub_menu_page1,
-    sub_menu_page2,
-    sub_menu_page3,
-    independent_page,
-    independent_wildcard_page,
-    url_params_page,
+
     # 系统管理相关页面
     login_logs,
     
-    # 新增页面
+    # 数据资产相关页面
+    asset_inventory_page,
+    asset_search_page,
+
+    # 数据源相关页面
     data_source_page,
     data_quality_page,
 )
@@ -155,40 +154,15 @@ def core_router(
         # 更新页面返回内容
         page_content = index.render()
 
-    # 以子菜单演示1做简单示例
-    elif pathname == "/core/sub-menu-page1":
+    # 新增页面-资产盘点
+    elif pathname == "/core/asset-inventory":
         # 更新页面返回内容
-        page_content = sub_menu_page1.render()
-
-    # 以子菜单演示2做简单示例
-    elif pathname == "/core/sub-menu-page2":
-        # 更新页面返回内容
-        page_content = sub_menu_page2.render()
-
-    # 以子菜单演示3做简单示例
-    elif pathname == "/core/sub-menu-page3":
-        # 更新页面返回内容
-        page_content = sub_menu_page3.render()
-
-    # 以独立页面做简单示例
-    elif pathname == "/core/independent-page":
-        # 更新页面返回内容
-        page_content = independent_page.render()
-
-    # 以独立通配页面做简单示例
-    elif pathname == "/core/independent-wildcard-page":
-        # 更新页面返回内容
-        page_content = independent_wildcard_page.render()
-
-    # 以url参数提取页面做简单示例
-    elif pathname == "/core/url-params-page":
-        # 更新页面返回内容
-        page_content = url_params_page.render(current_url=current_url)
+        page_content = asset_inventory_page.render()
     
-    # 新增页面-数据源管理
-    elif pathname == "/core/data-source-page":
+    # 新增页面-资产搜索
+    elif pathname == "/core/asset-search":
         # 更新页面返回内容
-        page_content = data_source_page.render()
+        page_content = asset_search_page.render()
     
     # 新增页面-数据质量检查页
     elif pathname == "/core/data-quality-page":
@@ -200,7 +174,12 @@ def core_router(
     elif pathname == "/core/login-logs":
         # 更新页面返回内容
         page_content = login_logs.render()
-
+    
+    # 新增页面-数据源管理
+    elif pathname == "/core/data-source-page":
+        # 更新页面返回内容
+        page_content = data_source_page.render()
+    
     # 多标签页形式
     if page_config.get("core_layout_type") == "tabs":
         # 基于Patch进行标签页子项远程映射更新

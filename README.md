@@ -23,7 +23,7 @@ magic-dash/
 ├── components/             # 可复用UI组件封装
 ├── configs/                # 配置中心（认证、数据库、路由、布局等系统配置）
 ├── database/               # 数据库文件目录
-├── models/                 # 数据模型层（使用peewee定义用户、日志等实体）
+├── models/                 # 数据模型层
 ├── utils/                  # 工具脚本（如清理缓存文件）
 ├── views/                  # 视图层（页面布局模块）
 │   ├── core_pages/        # 核心页面视图（如数据质量监控、用户管理等）
