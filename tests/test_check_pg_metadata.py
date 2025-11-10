@@ -1,5 +1,5 @@
 """
-执行 core/sql/metadata/check_table_size.sql 的小脚本/测试：
+执行 core/sql/metadata/pgsql/check_table_size.sql 的小脚本/测试：
 - 默认在 web-dev 环境下运行
 - 自动选择第一个 PostgreSQL 数据源（也可通过命令行参数 --ds 指定）
 - dt 默认取今天（YYYY-MM-DD），可通过 --dt 指定
@@ -7,8 +7,8 @@
 - 额外打印按 total_size 排序的 Top10（基于 pg_size_pretty 文本解析成字节排序）
 
 用法：
-  conda run -n web-dev python tests/test_check_table_size.py
-  conda run -n web-dev python tests/test_check_table_size.py --ds my_pg --dt 2025-11-09
+  conda run -n web-dev python tests/test_check_pg_metadata.py
+  conda run -n web-dev python tests/test_check_pg_metadata.py --ds my_pg --dt 2025-11-09
 """
 
 
@@ -35,7 +35,7 @@ from models.data_assets import AssetDB, CheckTableSize
 
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[1]
-SQL_PATH = PROJECT_ROOT / "core" / "sql" / "metadata" / "check_table_size.sql"
+SQL_PATH = PROJECT_ROOT / "core" / "sql" / "metadata" / "pgsql" / "check_table_size.sql"
 
 
 def _render_sql(dt: str) -> str:

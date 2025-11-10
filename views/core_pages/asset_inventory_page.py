@@ -12,34 +12,83 @@
 
 from dash import html
 import feffery_antd_components as fac
+import feffery_antd_charts as fac_charts
 from feffery_dash_utils.style_utils import style
 
 import callbacks.core_pages_c.asset_inventory_c  # noqa: F401
 
+import random
 
 def render():
     """资产盘点页面"""
     return fac.AntdSpace(
         [
             fac.AntdBreadcrumb(items=[{"title": "数据资产"}, {"title": "资产盘点"}]),
-             
-            # 数据源筛选器
+            
+            html.Br(),
+
+            # 筛选器
             fac.AntdRow([
                 fac.AntdCol(
-                    fac.AntdFormItem(
-                        fac.AntdSelect(
-                            id='ai-snapshot-ds-select',
-                            options=[],
-                            defaultValue='all',
-                            placeholder='请选择数据源',
-                            style={'width': '200px'}
-                        ),
-                        label='数据源筛选',
+                    fac.AntdText("数据源：", style={'fontSize': '14px'}),
+                ),
+                fac.AntdCol(
+                    fac.AntdSelect(
+                        id='ai-snapshot-ds-select',
+                        options=[],
+                        defaultValue='all',
+                        placeholder='请选择数据源',
+                        style={'width': '120px'}
                     ),
-                    span=24,
-                    style={'textAlign': 'right', 'marginBottom': '16px'}
-                )
-            ]),
+                ),
+                fac.AntdCol(
+                    fac.AntdText("时间范围：", style={'fontSize': '14px'}),
+                ),
+                fac.AntdCol(
+                    fac.AntdRadioGroup(
+                        id="ai-time-range",
+                        options=["近一周", "近一月", "近三月", "近半年"],
+                        defaultValue="近一周",
+                        optionType="button",
+                        buttonStyle="solid",
+                    ),
+                ),
+            ], gutter=10),
+
+            # 表命名开头 ods/dim/dwd/dws/ads 分布（饼图）与每日总量（柱状图）
+            fac.AntdRow([
+                fac.AntdCol(
+                    fac_charts.AntdPie(
+                        id='ai-prefix-pie',
+                        data=[],
+                        colorField='type',
+                        angleField='value',
+                        radius=0.9,
+                        innerRadius=0.6,
+                        label={'type': 'inner'},
+                    ),
+                    span=8,
+                ),
+                # 资产占用存储资源（双轴折线图：左轴=每日总量，右轴=每日表数量）
+                fac.AntdCol(
+                    fac.AntdSpace([
+                        fac.AntdText(id='ai-volume-unit-text', type='secondary'),
+                        fac_charts.AntdDualAxes(
+                            id='ai-volume-dual',
+                            data=[[], []],
+                            xField='date',
+                            yField=['y1', 'y2'],
+                            geometryOptions=[{'geometry': 'line'}, {'geometry': 'line'}],
+                            legend={'position': 'top'},
+                            yAxis={
+                                'left': {'min': 0},
+                                'right': {'min': 0}
+                            },
+                        ),
+                    ], direction='vertical', style={'width': '100%'}),
+                    span=16,
+                ),
+            ], gutter=16),
 
             # 今日占用Top10（读取快照库）
             fac.AntdCard(
