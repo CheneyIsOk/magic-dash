@@ -17,7 +17,6 @@ from feffery_dash_utils.style_utils import style
 
 import callbacks.core_pages_c.asset_inventory_c  # noqa: F401
 
-import random
 
 def render():
     """资产盘点页面"""
@@ -55,6 +54,8 @@ def render():
                 ),
             ], gutter=10),
 
+            html.Br(),
+            
             # 表命名开头 ods/dim/dwd/dws/ads 分布（饼图）与每日总量（柱状图）
             fac.AntdRow([
                 fac.AntdCol(
@@ -63,11 +64,11 @@ def render():
                         data=[],
                         colorField='type',
                         angleField='value',
-                        radius=0.9,
-                        innerRadius=0.6,
-                        label={'type': 'inner'},
+                        radius=0.8,
+                        innerRadius=0.5,
+                        height=300,
                     ),
-                    span=8,
+                    span=9,
                 ),
                 # 资产占用存储资源（双轴折线图：左轴=每日总量，右轴=每日表数量）
                 fac.AntdCol(
@@ -78,15 +79,40 @@ def render():
                             data=[[], []],
                             xField='date',
                             yField=['y1', 'y2'],
-                            geometryOptions=[{'geometry': 'line'}, {'geometry': 'line'}],
+                            geometryOptions=[
+                                {
+                                    'geometry': 'line', 
+                                    'smooth': True,
+                                    'point': {
+                                        'shape': 'circle',
+                                        'size': 4,
+                                        'style': {
+                                            'opacity': 0.5,
+                                            'stroke': '#5AD8A6',
+                                            'fill': '#fff',
+                                        },
+                                    },
+                                }, 
+                                {
+                                    'geometry': 'column',
+                                    'barSize': 12,
+                                }   
+                            ],  # 左边=line，右边=column
                             legend={'position': 'top'},
+                            # 初始轴标题，回调会动态更新左轴单位
                             yAxis={
-                                'left': {'min': 0},
-                                'right': {'min': 0}
+                                'left': {'min': 0, 'title': {'text': '每日总量（存储）'}},
+                                'right': {'min': 0, 'title': {'text': '每日表数量（张）'}}
                             },
+                            # 优化图例与tooltip字段名，避免显示 y1/y2
+                            meta={
+                                'y1': {'alias': '每日总量（存储）'},
+                                'y2': {'alias': '每日表数量（张）'}
+                            },
+                            height=300,
                         ),
                     ], direction='vertical', style={'width': '100%'}),
-                    span=16,
+                    span=15,
                 ),
             ], gutter=16),
 

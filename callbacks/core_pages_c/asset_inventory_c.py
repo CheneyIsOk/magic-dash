@@ -24,23 +24,6 @@ PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent
 
 
 @callback(
-    Output("ai-datasource-select", "options"),
-    Input("ai-datasource-select", "id"),
-)
-def load_ai_datasource_options(_trigger: str) -> List[Dict[str, str]]:
-    """加载数据源选项（仅展示PostgreSQL类型，因SQL依赖pg_*函数）"""
-    options: List[Dict[str, str]] = []
-    try:
-        query = DataSourceModel.select()
-        for ds in query:
-            if ds.type == "postgresql":
-                options.append({"label": ds.name, "value": ds.name})
-    except Exception as e:
-        print(f"加载数据源列表失败: {e}")
-    return options
-
-
-@callback(
     Output("ai-snapshot-ds-select", "options"),
     Input("ai-snapshot-ds-select", "id"),
 )
@@ -182,6 +165,8 @@ def _resolve_time_range_days(range_label: Optional[str]) -> int:
     [
         Output("ai-prefix-pie", "data"),
         Output("ai-volume-dual", "data"),
+        Output("ai-volume-dual", "yAxis"),
+        Output("ai-volume-dual", "meta"),
         Output("ai-volume-unit-text", "children"),
     ],
     [
@@ -197,16 +182,21 @@ def update_prefix_pie_and_volume_dual(ds_filter: Optional[str], time_range: Opti
     以上均受数据源筛选与时间范围筛选影响。
     """
     if not _snapshot_available:
-        return [], [], ""
+        return [], [[], []], {
+            'left': {'min': 0, 'title': {'text': '每日总量'}},
+            'right': {'min': 0, 'title': {'text': '每日表数量'}}
+        }, {
+            'y1': {'alias': '每日总量'},
+            'y2': {'alias': '每日表数量'}
+        }, ""
 
     days = _resolve_time_range_days(time_range)
     end_dt = date.today()
     start_dt = end_dt - timedelta(days=days - 1)
     start_str, end_str = start_dt.isoformat(), end_dt.isoformat()
 
-    # 初始化聚合结构
-    # 饼图：统计表数量（唯一表），而非 total_size
-    prefix_unique: Dict[str, set] = {k: set() for k in ["ods", "dim", "dwd", "dws", "ads", "other"]}
+    # 饼图：统计表数量（唯一表）
+    prefix_unique: Dict[str, set] = {k: set() for k in ["etl", "ods", "dim", "dwd", "dws", "ads", "other"]}
     # 折线：每日总量（字节）与每日表数量
     daily_sum: Dict[str, float] = {}
     daily_count: Dict[str, int] = {}
@@ -272,4 +262,12 @@ def update_prefix_pie_and_volume_dual(ds_filter: Optional[str], time_range: Opti
     ]
 
     unit_text = f"左轴单位：{unit_label}；右轴：表数量"
-    return pie_data, [left_line, right_line], unit_text
+    y_axis = {
+        'left': {'min': 0, 'title': {'text': f'每日总量（{unit_label}）'}},
+        'right': {'min': 0, 'title': {'text': '每日表数量'}}
+    }
+    meta = {
+        'y1': {'alias': f'每日总量（{unit_label}）'},
+        'y2': {'alias': '每日表数量（张）'}
+    }
+    return pie_data, [left_line, right_line], y_axis, meta, unit_text

@@ -104,7 +104,7 @@ def _write_check_table_size(
     for row in records:
         payloads.append({
             "dt": dt,
-            "datasource": datasource_name,
+            "data_source": datasource_name,
             "data_source_db": data_source_db or "",
             "table_schema": row.get("table_schema", "public"),
             "table_name": row.get("table_name", ""),
@@ -119,7 +119,7 @@ def _write_check_table_size(
         with AssetDB.atomic():
             # 按 dt + datasource 清空，避免一天同数据源的数据重复
             CheckTableSize.delete().where(
-                (CheckTableSize.dt == dt) & (CheckTableSize.datasource == datasource_name)
+                (CheckTableSize.dt == dt) & (CheckTableSize.data_source == datasource_name)
             ).execute()
             if payloads:
                 CheckTableSize.insert_many(payloads).execute()
